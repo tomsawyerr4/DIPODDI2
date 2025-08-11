@@ -140,7 +140,7 @@ def main():
             weights = get_specificite_weights(poste, profil, programme)
             
             today = datetime.now()
-            start_date = today 
+            start_date = today + timedelta(days=2)
             #start_date = today - timedelta(days=today.weekday())  # Lundi
             
             for semaine in range(1, 5):
@@ -183,4 +183,5 @@ def main():
                             display_seance(seances[jour_num].split('\n', 1)[1])
 if __name__ == "__main__":
     main()
+
 
