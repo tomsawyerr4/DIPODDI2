@@ -110,7 +110,6 @@ def main():
 
     specificites = mettre_a_jour_specificite(programme)
     specificite = st.selectbox("Spécificité :", specificites)
-    #nbr_seances = st.slider("Nombre de séances par semaine :", min_value=3, max_value=7, value=4)
     est_dans_club = st.radio("Êtes-vous dans un club ?", ["OUI", "NON"])
     
     jours_match = []        
@@ -120,8 +119,6 @@ def main():
             ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"],
             default=[]
         )
-    
-    # Filtrer les jours disponibles pour exclure les jours de match
     jours_entrainement_possibles = [jour for jour in ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"] 
                                   if jour not in jours_match]
     
@@ -134,6 +131,7 @@ def main():
     nbr_seances = len(jours_disponibles)
     if len(jours_disponibles) < 2:
             st.warning("Veuillez sélectionner au moins 2 jours (hors jours de match).")
+    
     if st.button("Générer le programme du mois"):
         st.success(f"Programme généré pour {prenom if prenom else 'User'}")
         if len(jours_disponibles) >= 2:
@@ -141,52 +139,43 @@ def main():
             
             today = datetime.now()
             start_date = today
-            #start_date = today - timedelta(days=today.weekday())  # Lundi
             
             for semaine in range(1, 5):
                 current_specificite = specificite if semaine == 1 else choose_specificite(weights, specificite)
                 st.markdown(f"### Semaine {semaine} - {programme}")
-                
-                semaine_start = start_date #+ timedelta(weeks=semaine-1)
-                semaine_end = semaine_start + timedelta(days=6)
+
+                semaine_start = start_date
+                semaine_end = start_date + timedelta(days=6)
                 
                 debut_fr = JOURS_TRADUCTION[semaine_start.strftime("%A")] + semaine_start.strftime(" %d/%m/%Y")
                 fin_fr = JOURS_TRADUCTION[semaine_end.strftime("%A")] + semaine_end.strftime(" %d/%m/%Y")
                 st.caption(f"Du {debut_fr} au {fin_fr}")
-                
-                #Génération programme
+
                 resultat = programme_semaine_utilisateur(
                     choix=programme,
                     theme_principal=current_specificite,
                     nbr_seances=nbr_seances,
                     niveau=niveau
                 )
-                
-                #separation du contenu par séance
-                seances = [s for s in resultat.split('Jour ') if s.strip()][1:]  #partie vide
-                
-                # Traitement par jour
-                for i, jour in enumerate(["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"]):
-                    current_date = semaine_start + timedelta(days=i-1)
+                seances = [s for s in resultat.split('Jour ') if s.strip()][1:]
+
+                for day_offset in range(7):
+                    current_date = start_date + timedelta(days=day_offset)
                     day_fr = JOURS_TRADUCTION[current_date.strftime("%A")]
                     date_str = f"{day_fr} {current_date.strftime('%d/%m/%Y')}"
+                    jour_semaine = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"][current_date.weekday()]
                     
-                    if jour in jours_match:
-                        st.markdown(f"**{date_str} (jour de match)** ")
-                        st.markdown(" *Pas de seance (match prévu)*")
-                        st.markdown("_____________________")
-                    elif jour in jours_disponibles:
-                        jour_num = jours_disponibles.index(jour)
+                    if jour_semaine in jours_match:
+                        st.markdown(f"**{date_str} (jour de match)**")
+                        st.markdown("*Pas de séance (match prévu)*")
+                        st.markdown("---")
+                    elif jour_semaine in jours_disponibles:
+                        jour_num = jours_disponibles.index(jour_semaine)
                         if jour_num < len(seances):
                             st.markdown(f"**{date_str}**")
-                            # Afficher le contenu complet de la séance
                             display_seance(seances[jour_num].split('\n', 1)[1])
+                            st.markdown("---")
+
+                start_date += timedelta(days=7)
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
