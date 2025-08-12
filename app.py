@@ -147,8 +147,8 @@ def main():
                 current_specificite = specificite if semaine == 1 else choose_specificite(weights, specificite)
                 st.markdown(f"### Semaine {semaine} - {programme}")
                 
-                semaine_start = start_date + timedelta(weeks=semaine-1)
-                semaine_end = semaine_start + timedelta(days=6)
+                semaine_start = start_date #+ timedelta(weeks=semaine-1)
+                semaine_end = semaine_start + timedelta(days=7)
                 
                 debut_fr = JOURS_TRADUCTION[semaine_start.strftime("%A")] + semaine_start.strftime(" %d/%m/%Y")
                 fin_fr = JOURS_TRADUCTION[semaine_end.strftime("%A")] + semaine_end.strftime(" %d/%m/%Y")
@@ -183,6 +183,7 @@ def main():
                             display_seance(seances[jour_num].split('\n', 1)[1])
 if __name__ == "__main__":
     main()
+
 
 
 
