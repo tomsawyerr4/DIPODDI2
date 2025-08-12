@@ -148,7 +148,7 @@ def main():
                 st.markdown(f"### Semaine {semaine} - {programme}")
                 
                 semaine_start = start_date #+ timedelta(weeks=semaine-1)
-                semaine_end = semaine_start + timedelta(days=7)
+                semaine_end = semaine_start + timedelta(days=6)
                 
                 debut_fr = JOURS_TRADUCTION[semaine_start.strftime("%A")] + semaine_start.strftime(" %d/%m/%Y")
                 fin_fr = JOURS_TRADUCTION[semaine_end.strftime("%A")] + semaine_end.strftime(" %d/%m/%Y")
@@ -167,7 +167,7 @@ def main():
                 
                 # Traitement par jour
                 for i, jour in enumerate(["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"]):
-                    current_date = semaine_start + timedelta(days=i)
+                    current_date = semaine_start + timedelta(days=i-1)
                     day_fr = JOURS_TRADUCTION[current_date.strftime("%A")]
                     date_str = f"{day_fr} {current_date.strftime('%d/%m/%Y')}"
                     
@@ -183,6 +183,7 @@ def main():
                             display_seance(seances[jour_num].split('\n', 1)[1])
 if __name__ == "__main__":
     main()
+
 
 
 
